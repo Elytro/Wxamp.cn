@@ -1,1 +1,412 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title>微信小程序码展示</title>
+    <link href="https://apps.bdimg.com/libs/bootstrap/3.3.4/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://apps.bdimg.com/libs/fontawesome/4.4.0/css/font-awesome.min.css" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; }
 
+        html, body { height: 100%; }
+
+        body {
+            background-color: #fff;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "Helvetica Neue", Helvetica, Arial, sans-serif;
+            color: #333;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* ===== 顶部区域 ===== */
+        .page-header-custom {
+            text-align: center;
+            padding: 70px 15px 50px;
+            margin: 0;
+            position: relative;
+        }
+
+        .page-header-custom::after {
+            content: '';
+            display: block;
+            width: 40px;
+            height: 3px;
+            background: #07C160;
+            margin: 20px auto 0;
+            border-radius: 2px;
+        }
+
+        .page-header-custom h1 {
+            font-size: 30px;
+            font-weight: 300;
+            color: #1a1a1a;
+            letter-spacing: 3px;
+            margin: 0;
+        }
+
+        .page-header-custom .subtitle {
+            font-size: 14px;
+            color: #bbb;
+            margin-top: 10px;
+            letter-spacing: 2px;
+            font-weight: 300;
+        }
+
+        /* ===== 主内容区 ===== */
+        .main-content {
+            flex: 1;
+            padding: 0 15px 80px;
+        }
+
+        .main-content .container {
+            max-width: 1060px;
+        }
+
+        .row-grid {
+            margin-left: -20px;
+            margin-right: -20px;
+        }
+
+        .col-grid {
+            padding-left: 20px;
+            padding-right: 20px;
+        }
+
+        /* ===== 小程序卡片 ===== */
+        .mp-card {
+            text-align: center;
+            padding: 40px 20px 32px;
+            margin-bottom: 40px;
+            border-radius: 12px;
+            border: 1px solid transparent;
+            transition: all 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .mp-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 3px;
+            border-radius: 0 0 3px 3px;
+            transition: width 0.35s ease;
+        }
+
+        .mp-card:hover {
+            border-color: #eee;
+            background: #fcfcfc;
+            box-shadow: 0 8px 40px rgba(0, 0, 0, 0.05);
+            transform: translateY(-2px);
+        }
+
+        .mp-card:hover::before {
+            width: 60px;
+            background: #07C160;
+        }
+
+        /* 图标 */
+        .mp-card-icon {
+            width: 52px;
+            height: 52px;
+            border-radius: 13px;
+            margin-bottom: 16px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.07);
+            transition: transform 0.3s ease;
+        }
+
+        .mp-card:hover .mp-card-icon {
+            transform: scale(1.08);
+        }
+
+        /* 标签 */
+        .mp-card-tag {
+            display: inline-block;
+            font-size: 11px;
+            color: #07C160;
+            border: 1px solid rgba(7, 193, 96, 0.25);
+            border-radius: 20px;
+            padding: 3px 14px;
+            margin-bottom: 12px;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+        }
+
+        .mp-card:hover .mp-card-tag {
+            background: #07C160;
+            color: #fff;
+        }
+
+        /* 名称 */
+        .mp-card-name {
+            font-size: 17px;
+            font-weight: 500;
+            color: #1a1a1a;
+            margin-bottom: 6px;
+            letter-spacing: 1px;
+        }
+
+        /* 描述 */
+        .mp-card-desc {
+            font-size: 13px;
+            color: #aaa;
+            margin-bottom: 22px;
+            line-height: 1.6;
+            min-height: 20px;
+        }
+
+        /* 小程序码容器 */
+        .mp-card-qr {
+            display: inline-block;
+            padding: 16px;
+            background: #fff;
+            border-radius: 10px;
+            border: 1px solid #f0f0f0;
+            transition: all 0.35s ease;
+            position: relative;
+        }
+
+        .mp-card:hover .mp-card-qr {
+            border-color: #e0e0e0;
+            box-shadow: 0 6px 28px rgba(0, 0, 0, 0.07);
+        }
+
+        .mp-card-qr-img {
+            width: 176px;
+            height: 176px;
+            display: block;
+            border-radius: 4px;
+        }
+
+        /* 扫码提示 */
+        .mp-card-tip {
+            margin-top: 14px;
+            font-size: 12px;
+            color: #ccc;
+            letter-spacing: 1px;
+            transition: color 0.3s ease;
+        }
+
+        .mp-card:hover .mp-card-tip {
+            color: #999;
+        }
+
+        .mp-card-tip .fa-weixin {
+            margin-right: 3px;
+        }
+
+        /* ===== 分割线区域 ===== */
+        .section-divider {
+            text-align: center;
+            padding: 20px 0 30px;
+        }
+
+        .section-divider span {
+            display: inline-block;
+            font-size: 12px;
+            color: #ddd;
+            letter-spacing: 3px;
+            position: relative;
+            padding: 0 20px;
+        }
+
+        .section-divider span::before,
+        .section-divider span::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            width: 60px;
+            height: 1px;
+            background: #eee;
+        }
+
+        .section-divider span::before { right: 100%; }
+        .section-divider span::after  { left: 100%; }
+
+        /* ===== 页脚 ===== */
+        .footer {
+            text-align: center;
+            padding: 30px 15px;
+            border-top: 1px solid #f5f5f5;
+            background: #fcfcfc;
+        }
+
+        .footer-info {
+            font-size: 12px;
+            color: #bbb;
+            line-height: 2.2;
+            margin: 0;
+        }
+
+        .footer-info a {
+            color: #bbb;
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+
+        .footer-info a:hover {
+            color: #666;
+        }
+
+        .footer-info .divider {
+            margin: 0 10px;
+            color: #e8e8e8;
+        }
+
+        /* ===== 响应式 ===== */
+        @media (max-width: 991px) {
+            .page-header-custom { padding: 50px 15px 36px; }
+            .page-header-custom h1 { font-size: 24px; letter-spacing: 2px; }
+            .mp-card { padding: 30px 15px 24px; }
+            .mp-card-qr-img { width: 160px; height: 160px; }
+        }
+
+        @media (max-width: 767px) {
+            .page-header-custom { padding: 40px 15px 30px; }
+            .page-header-custom h1 { font-size: 22px; }
+            .page-header-custom::after { margin-top: 16px; }
+            .mp-card {
+                margin-bottom: 24px;
+                padding: 28px 15px 22px;
+            }
+            .mp-card-qr-img { width: 164px; height: 164px; }
+            .row-grid { margin-left: -10px; margin-right: -10px; }
+            .col-grid { padding-left: 10px; padding-right: 10px; }
+        }
+
+        @media (max-width: 480px) {
+            .page-header-custom h1 { font-size: 20px; letter-spacing: 2px; }
+            .page-header-custom .subtitle { font-size: 13px; }
+            .mp-card-name { font-size: 15px; }
+            .mp-card-qr-img { width: 180px; height: 180px; }
+            .mp-card { border-radius: 8px; padding: 24px 12px 20px; margin-bottom: 16px; }
+            .mp-card-qr { padding: 12px; }
+            .row-grid { margin-left: -6px; margin-right: -6px; }
+            .col-grid { padding-left: 6px; padding-right: 6px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 顶部标题 -->
+    <div class="page-header-custom">
+        <h1>微 信 小 程 序</h1>
+        <p class="subtitle">扫一扫小程序码 · 立即体验</p>
+    </div>
+
+    <!-- 主内容区 -->
+    <div class="main-content">
+        <div class="container">
+            <div class="row row-grid">
+
+                <!-- 小程序 1 -->
+                <div class="col-md-4 col-sm-6 col-xs-12 col-grid">
+                    <div class="mp-card">
+                        <span class="mp-card-tag">效率工具</span>
+                        <p class="mp-card-name">水煮舟</p>
+                        <p class="mp-card-desc">简洁高效，专注你的每一分钟</p>
+                        <div class="mp-card-qr">
+                            <img class="mp-card-qr-img" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='176' height='176'%3E%3Crect width='176' height='176' rx='4' fill='%23f7f7f7'/%3E%3Ccircle cx='88' cy='80' r='24' fill='none' stroke='%23ddd' stroke-width='2'/%3E%3Ctext x='88' y='125' text-anchor='middle' fill='%23ccc' font-size='12' font-family='sans-serif'%3E小程序码%3C/text%3E%3Ctext x='88' y='142' text-anchor='middle' fill='%23ddd' font-size='9' font-family='sans-serif'%3E替换为实际图片%3C/text%3E%3C/svg%3E" alt="小程序码">
+                        </div>
+                        <p class="mp-card-tip"><i class="fa fa-weixin"></i>微信扫码访问</p>
+                    </div>
+                </div>
+
+                <!-- 小程序 2 -->
+                <div class="col-md-4 col-sm-6 col-xs-12 col-grid">
+                    <div class="mp-card">
+                        <span class="mp-card-tag">生活服务</span>
+                        <p class="mp-card-name">妖管局</p>
+                        <p class="mp-card-desc">生活琐事，一键托管轻松搞定</p>
+                        <div class="mp-card-qr">
+                            <img class="mp-card-qr-img" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='176' height='176'%3E%3Crect width='176' height='176' rx='4' fill='%23f7f7f7'/%3E%3Ccircle cx='88' cy='80' r='24' fill='none' stroke='%23ddd' stroke-width='2'/%3E%3Ctext x='88' y='125' text-anchor='middle' fill='%23ccc' font-size='12' font-family='sans-serif'%3E小程序码%3C/text%3E%3Ctext x='88' y='142' text-anchor='middle' fill='%23ddd' font-size='9' font-family='sans-serif'%3E替换为实际图片%3C/text%3E%3C/svg%3E" alt="小程序码">
+                        </div>
+                        <p class="mp-card-tip"><i class="fa fa-weixin"></i>微信扫码访问</p>
+                    </div>
+                </div>
+
+                <!-- 小程序 3 -->
+                <div class="col-md-4 col-sm-6 col-xs-12 col-grid">
+                    <div class="mp-card">
+                        <span class="mp-card-tag">通讯社交</span>
+                        <p class="mp-card-name">闪电邮</p>
+                        <p class="mp-card-desc">极速收发，沟通零距离</p>
+                        <div class="mp-card-qr">
+                            <img class="mp-card-qr-img" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='176' height='176'%3E%3Crect width='176' height='176' rx='4' fill='%23f7f7f7'/%3E%3Ccircle cx='88' cy='80' r='24' fill='none' stroke='%23ddd' stroke-width='2'/%3E%3Ctext x='88' y='125' text-anchor='middle' fill='%23ccc' font-size='12' font-family='sans-serif'%3E小程序码%3C/text%3E%3Ctext x='88' y='142' text-anchor='middle' fill='%23ddd' font-size='9' font-family='sans-serif'%3E替换为实际图片%3C/text%3E%3C/svg%3E" alt="小程序码">
+                        </div>
+                        <p class="mp-card-tip"><i class="fa fa-weixin"></i>微信扫码访问</p>
+                    </div>
+                </div>
+
+                <!-- 小程序 4 -->
+                <div class="col-md-4 col-sm-6 col-xs-12 col-grid">
+                    <div class="mp-card">
+                        <span class="mp-card-tag">影像创作</span>
+                        <p class="mp-card-name">达盖尔</p>
+                        <p class="mp-card-desc">定格美好，你的专属影像工坊</p>
+                        <div class="mp-card-qr">
+                            <img class="mp-card-qr-img" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='176' height='176'%3E%3Crect width='176' height='176' rx='4' fill='%23f7f7f7'/%3E%3Ccircle cx='88' cy='80' r='24' fill='none' stroke='%23ddd' stroke-width='2'/%3E%3Ctext x='88' y='125' text-anchor='middle' fill='%23ccc' font-size='12' font-family='sans-serif'%3E小程序码%3C/text%3E%3Ctext x='88' y='142' text-anchor='middle' fill='%23ddd' font-size='9' font-family='sans-serif'%3E替换为实际图片%3C/text%3E%3C/svg%3E" alt="小程序码">
+                        </div>
+                        <p class="mp-card-tip"><i class="fa fa-weixin"></i>微信扫码访问</p>
+                    </div>
+                </div>
+
+                <!-- 小程序 5 -->
+                <div class="col-md-4 col-sm-6 col-xs-12 col-grid">
+                    <div class="mp-card">
+                        <span class="mp-card-tag">社交聚会</span>
+                        <p class="mp-card-name">欢聚宝</p>
+                        <p class="mp-card-desc">好友相聚，快乐一键发起</p>
+                        <div class="mp-card-qr">
+                            <img class="mp-card-qr-img" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='176' height='176'%3E%3Crect width='176' height='176' rx='4' fill='%23f7f7f7'/%3E%3Ccircle cx='88' cy='80' r='24' fill='none' stroke='%23ddd' stroke-width='2'/%3E%3Ctext x='88' y='125' text-anchor='middle' fill='%23ccc' font-size='12' font-family='sans-serif'%3E小程序码%3C/text%3E%3Ctext x='88' y='142' text-anchor='middle' fill='%23ddd' font-size='9' font-family='sans-serif'%3E替换为实际图片%3C/text%3E%3C/svg%3E" alt="小程序码">
+                        </div>
+                        <p class="mp-card-tip"><i class="fa fa-weixin"></i>微信扫码访问</p>
+                    </div>
+                </div>
+
+                <!-- 小程序 6 -->
+                <div class="col-md-4 col-sm-6 col-xs-12 col-grid">
+                    <div class="mp-card">
+                        <span class="mp-card-tag">购物优惠</span>
+                        <p class="mp-card-name">微薄利</p>
+                        <p class="mp-card-desc">精选好物，每天都有小惊喜</p>
+                        <div class="mp-card-qr">
+                            <img class="mp-card-qr-img" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='176' height='176'%3E%3Crect width='176' height='176' rx='4' fill='%23f7f7f7'/%3E%3Ccircle cx='88' cy='80' r='24' fill='none' stroke='%23ddd' stroke-width='2'/%3E%3Ctext x='88' y='125' text-anchor='middle' fill='%23ccc' font-size='12' font-family='sans-serif'%3E小程序码%3C/text%3E%3Ctext x='88' y='142' text-anchor='middle' fill='%23ddd' font-size='9' font-family='sans-serif'%3E替换为实际图片%3C/text%3E%3C/svg%3E" alt="小程序码">
+                        </div>
+                        <p class="mp-card-tip"><i class="fa fa-weixin"></i>微信扫码访问</p>
+                    </div>
+                </div>
+
+            </div><!-- /.row -->
+        </div><!-- /.container -->
+    </div><!-- /.main-content -->
+
+    <!-- 页脚 -->
+    <footer class="footer">
+        <div class="container-fluid">
+            <p class="footer-info">
+                Copyright &copy; <script>document.write(new Date().getFullYear())</script> Wxamp.com All Rights Reserved.
+            </p>
+            <p class="footer-info">
+                <a href="https://beian.miit.gov.cn/" target="_blank" rel="noopener noreferrer">
+                    ICP备XXXXXXXX号-1
+                </a>
+                <span class="divider">|</span>
+                <a href="http://www.beian.gov.cn/" target="_blank" rel="noopener noreferrer">
+                    公网安备 XXXXXXXXXXXX号
+                </a>
+            </p>
+        </div>
+    </footer>
+
+    <script src="https://apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+    <script src="https://apps.bdimg.com/libs/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+</body>
+</html>
